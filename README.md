@@ -1,1 +1,1 @@
-# Statistical-Analysis-of-Salaries-in-Data
+# Statistical Analysis of Salaries in Data
