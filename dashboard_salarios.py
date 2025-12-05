@@ -1,14 +1,13 @@
 """
 Dashboard Interativo - Análise Salarial em Data Science
 Desenvolvido com Plotly Dash
-Versão com detecção automática de arquivo
+Versão com filtro por país e análise corrigida de Top Cargos
 """
 
 import dash
 from dash import dcc, html, Input, Output
 import plotly.express as px
 import plotly.graph_objects as go
-from plotly.subplots import make_subplots
 import pandas as pd
 import numpy as np
 import dash_bootstrap_components as dbc
@@ -16,88 +15,84 @@ import os
 import glob
 
 # ============================================================================
-# CARREGAMENTO E PREPARAÇÃO DOS DADOS (COM DETECÇÃO AUTOMÁTICA)
+# CARREGAMENTO E PREPARAÇÃO DOS DADOS (OTIMIZADO)
 # ============================================================================
 
 print("\n" + "="*70)
-print("🔍 LOCALIZANDO ARQUIVO salaries.csv")
+print("🔍 LOCALIZANDO ARQUIVO DE DADOS")
 print("="*70)
 
-# Função para encontrar o arquivo
-def encontrar_arquivo_csv(nome_arquivo="salaries.csv"):
+def encontrar_arquivo_csv():
     """
-    Procura o arquivo CSV em múltiplos locais possíveis
+    Procura o arquivo CSV em múltiplos locais e nomes possíveis
     """
-    # Lista de caminhos possíveis
-    caminhos_possiveis = [
-        nome_arquivo,                          # Diretório atual
-        f"data/{nome_arquivo}",                # Pasta data
-        f"../{nome_arquivo}",                  # Um nível acima
-        f"../../{nome_arquivo}",               # Dois níveis acima
-        f"datasets/{nome_arquivo}",            # Pasta datasets
-        f"../data/{nome_arquivo}",             # data um nível acima
+    nomes_possiveis = [
+        "salario_profissionais_dados.csv",
+        "salaries.csv",
+        "ds_salaries.csv",
+        "data_science_salaries.csv"
     ]
     
-    # Verifica cada caminho
-    for caminho in caminhos_possiveis:
-        if os.path.exists(caminho):
+    pastas_possiveis = [
+        "",
+        "Data",
+        "data",
+        "datasets",
+        "..",
+        "../.."
+    ]
+    
+    for pasta in pastas_possiveis:
+        for nome in nomes_possiveis:
+            if pasta:
+                caminho = os.path.join(pasta, nome)
+            else:
+                caminho = nome
+            
+            if os.path.exists(caminho):
+                caminho_completo = os.path.abspath(caminho)
+                print(f"✅ Arquivo encontrado: {caminho}")
+                print(f"📁 Caminho completo: {caminho_completo}")
+                return caminho
+    
+    print("\n🔎 Procurando recursivamente...")
+    for nome in nomes_possiveis:
+        arquivos_encontrados = glob.glob(f"**/{nome}", recursive=True)
+        if arquivos_encontrados:
+            caminho = arquivos_encontrados[0]
             caminho_completo = os.path.abspath(caminho)
             print(f"✅ Arquivo encontrado: {caminho}")
             print(f"📁 Caminho completo: {caminho_completo}")
             return caminho
     
-    # Se não encontrou, procura recursivamente
-    print("\n🔎 Procurando recursivamente...")
-    arquivos_encontrados = glob.glob(f"**/{nome_arquivo}", recursive=True)
-    
-    if arquivos_encontrados:
-        caminho = arquivos_encontrados[0]
-        caminho_completo = os.path.abspath(caminho)
-        print(f"✅ Arquivo encontrado: {caminho}")
-        print(f"📁 Caminho completo: {caminho_completo}")
-        return caminho
-    
-    # Se ainda não encontrou, mostra erro detalhado
     print("\n❌ ARQUIVO NÃO ENCONTRADO!")
     print(f"📁 Diretório atual: {os.getcwd()}")
-    print("\n📄 Arquivos CSV disponíveis no diretório:")
+    print("\n📄 Arquivos CSV disponíveis:")
     
     todos_csv = glob.glob("**/*.csv", recursive=True)
     if todos_csv:
-        for i, arquivo in enumerate(todos_csv[:10], 1):  # Mostra até 10
+        for i, arquivo in enumerate(todos_csv[:10], 1):
             print(f"   {i}. {arquivo}")
-        if len(todos_csv) > 10:
-            print(f"   ... e mais {len(todos_csv) - 10} arquivos")
     else:
         print("   (Nenhum arquivo CSV encontrado)")
     
-    print("\n💡 SOLUÇÕES:")
-    print("   1. Coloque 'salaries.csv' no diretório atual")
-    print("   2. Ou digite o caminho completo do arquivo abaixo:")
-    
-    caminho_manual = input("\n📝 Digite o caminho do arquivo (ou Enter para sair): ").strip()
-    
-    if caminho_manual and os.path.exists(caminho_manual):
-        print(f"✅ Usando: {caminho_manual}")
-        return caminho_manual
-    
     raise FileNotFoundError(
-        f"\n❌ Não foi possível localizar '{nome_arquivo}'.\n"
-        f"📁 Diretório atual: {os.getcwd()}\n"
-        "💡 Certifique-se de que o arquivo existe e está acessível."
+        f"\n❌ Arquivo de dados não encontrado!\n"
+        f"📁 Procurado em: {os.getcwd()}\n"
+        "💡 Verifique se o arquivo existe na pasta 'Data'"
     )
 
 # Carregar o dataset
 try:
-    caminho_arquivo = encontrar_arquivo_csv("salaries.csv")
+    caminho_arquivo = encontrar_arquivo_csv()
     df = pd.read_csv(caminho_arquivo)
     print(f"\n✅ Dataset carregado com sucesso!")
     print(f"📊 Total de registros: {len(df):,}")
     print(f"📋 Colunas: {', '.join(df.columns.tolist())}")
     print("="*70 + "\n")
 except Exception as e:
-    print(f"\n❌ ERRO ao carregar o dataset: {e}")
-    print("\n🛑 O dashboard não pode ser iniciado sem o arquivo de dados.")
+    print(f"\n❌ ERRO: {e}")
+    print("\n🛑 O dashboard não pode ser iniciado.")
     raise
 
 # Criando colunas numéricas para análises
@@ -119,6 +114,18 @@ df["experience_label"] = df["experience_level"].map(experience_labels)
 df["size_label"] = df["company_size"].map(size_labels)
 
 print("✅ Preparação dos dados concluída\n")
+
+# Verificar análise de Top Cargos (SEM FILTROS)
+print("="*70)
+print("📊 ANÁLISE DE TOP CARGOS (DATASET COMPLETO - SEM FILTROS)")
+print("="*70)
+top_cargos_analise = df.groupby("job_title").agg({
+    "salary_in_usd": ["mean", "median", "count"]
+}).round(2)
+top_cargos_analise.columns = ["Salário Médio", "Salário Mediano", "Qtd Registros"]
+top_cargos_analise = top_cargos_analise.sort_values("Salário Médio", ascending=False).head(10)
+print(top_cargos_analise)
+print("="*70 + "\n")
 
 # ============================================================================
 # CÁLCULOS DE KPIs
@@ -173,7 +180,6 @@ COLORS = {
 # COMPONENTES DO DASHBOARD
 # ============================================================================
 
-# Cards de KPIs
 def create_kpi_card(title, value, icon, color):
     return dbc.Card(
         dbc.CardBody([
@@ -202,11 +208,7 @@ app.layout = dbc.Container([
         dbc.Col([
             html.Div([
                 html.H1("📊 Dashboard - Análise Salarial em Data Science", 
-                       style={
-                           "color": "white",
-                           "fontWeight": "bold",
-                           "marginBottom": "10px"
-                       }),
+                       style={"color": "white", "fontWeight": "bold", "marginBottom": "10px"}),
                 html.P("Análise interativa de tendências salariais, correlações e insights estratégicos",
                       style={"color": "rgba(255,255,255,0.9)", "fontSize": "1.1rem", "marginBottom": "0"})
             ], style={
@@ -221,47 +223,18 @@ app.layout = dbc.Container([
     
     # KPIs PRINCIPAIS
     dbc.Row([
-        dbc.Col(create_kpi_card(
-            "Total de Registros",
-            f"{total_registros:,}",
-            "database",
-            COLORS["primary"]
-        ), width=12, md=6, lg=2, className="mb-3"),
-        
-        dbc.Col(create_kpi_card(
-            "Salário Médio",
-            f"${salario_medio:,.0f}",
-            "dollar-sign",
-            COLORS["success"]
-        ), width=12, md=6, lg=2, className="mb-3"),
-        
-        dbc.Col(create_kpi_card(
-            "Salário Mediano",
-            f"${salario_mediano:,.0f}",
-            "chart-line",
-            COLORS["info"]
-        ), width=12, md=6, lg=2, className="mb-3"),
-        
-        dbc.Col(create_kpi_card(
-            "CAGR",
-            f"{cagr:+.1f}%",
-            "arrow-trend-up",
-            COLORS["warning"]
-        ), width=12, md=6, lg=2, className="mb-3"),
-        
-        dbc.Col(create_kpi_card(
-            "Cargos Únicos",
-            f"{total_cargos}",
-            "briefcase",
-            COLORS["secondary"]
-        ), width=12, md=6, lg=2, className="mb-3"),
-        
-        dbc.Col(create_kpi_card(
-            "Países",
-            f"{total_paises}",
-            "globe",
-            COLORS["danger"]
-        ), width=12, md=6, lg=2, className="mb-3"),
+        dbc.Col(create_kpi_card("Total de Registros", f"{total_registros:,}", "database", COLORS["primary"]), 
+                width=12, md=6, lg=2, className="mb-3"),
+        dbc.Col(create_kpi_card("Salário Médio", f"${salario_medio:,.0f}", "dollar-sign", COLORS["success"]), 
+                width=12, md=6, lg=2, className="mb-3"),
+        dbc.Col(create_kpi_card("Salário Mediano", f"${salario_mediano:,.0f}", "chart-line", COLORS["info"]), 
+                width=12, md=6, lg=2, className="mb-3"),
+        dbc.Col(create_kpi_card("CAGR", f"{cagr:+.1f}%", "arrow-trend-up", COLORS["warning"]), 
+                width=12, md=6, lg=2, className="mb-3"),
+        dbc.Col(create_kpi_card("Cargos Únicos", f"{total_cargos}", "briefcase", COLORS["secondary"]), 
+                width=12, md=6, lg=2, className="mb-3"),
+        dbc.Col(create_kpi_card("Países", f"{total_paises}", "globe", COLORS["danger"]), 
+                width=12, md=6, lg=2, className="mb-3"),
     ], style={"marginBottom": "30px"}),
     
     # FILTROS INTERATIVOS
@@ -299,7 +272,19 @@ app.layout = dbc.Container([
                                 [{"label": size_labels[size], "value": size} 
                                  for size in sorted(df["company_size"].unique())],
                         value="all",
-                        clearable=False
+                        clearable=False,
+                        style={"marginBottom": "15px"}
+                    ),
+                    
+                    html.Label("País (Residência):", style={"fontWeight": "bold", "color": COLORS["dark"]}),
+                    dcc.Dropdown(
+                        id="filtro-pais",
+                        options=[{"label": "Todos", "value": "all"}] + 
+                                [{"label": pais, "value": pais} 
+                                 for pais in sorted(df["employee_residence"].unique())],
+                        value="all",
+                        clearable=False,
+                        placeholder="Selecione um país..."
                     ),
                 ])
             ], style={"boxShadow": "0 4px 6px rgba(0,0,0,0.1)", "borderRadius": "10px", "height": "100%"})
@@ -331,6 +316,8 @@ app.layout = dbc.Container([
             dbc.Card([
                 dbc.CardBody([
                     html.H5("💼 Top 10 Cargos Mais Bem Pagos", style={"marginBottom": "15px", "color": COLORS["dark"]}),
+                    html.P("(Baseado na média salarial com mínimo de 3 registros)", 
+                           style={"fontSize": "0.85rem", "color": "#6c757d", "marginBottom": "10px"}),
                     dcc.Graph(id="grafico-top-cargos", config={"displayModeBar": False})
                 ])
             ], style={"boxShadow": "0 4px 6px rgba(0,0,0,0.1)", "borderRadius": "10px"})
@@ -387,10 +374,11 @@ app.layout = dbc.Container([
     [
         Input("filtro-ano", "value"),
         Input("filtro-experiencia", "value"),
-        Input("filtro-tamanho", "value")
+        Input("filtro-tamanho", "value"),
+        Input("filtro-pais", "value")
     ]
 )
-def update_graphs(ano_selecionado, exp_selecionada, tamanho_selecionado):
+def update_graphs(ano_selecionado, exp_selecionada, tamanho_selecionado, pais_selecionado):
     
     # Filtrando dados
     df_filtrado = df.copy()
@@ -404,9 +392,11 @@ def update_graphs(ano_selecionado, exp_selecionada, tamanho_selecionado):
     if tamanho_selecionado != "all":
         df_filtrado = df_filtrado[df_filtrado["company_size"] == tamanho_selecionado]
     
+    if pais_selecionado != "all":
+        df_filtrado = df_filtrado[df_filtrado["employee_residence"] == pais_selecionado]
+    
     # Verificação de dados vazios
     if len(df_filtrado) == 0:
-        # Retorna gráficos vazios com mensagem
         fig_vazio = go.Figure()
         fig_vazio.add_annotation(
             text="Nenhum dado disponível para os filtros selecionados",
@@ -417,19 +407,63 @@ def update_graphs(ano_selecionado, exp_selecionada, tamanho_selecionado):
         fig_vazio.update_layout(template="plotly_white", height=300)
         return fig_vazio, fig_vazio, fig_vazio, fig_vazio, fig_vazio
     
-    # GRÁFICO 1: Distribuição Salarial (Histograma)
-    fig_dist = px.histogram(
-        df_filtrado,
-        x="salary_in_usd",
-        nbins=50,
-        labels={"salary_in_usd": "Salário (USD)", "count": "Frequência"},
-        color_discrete_sequence=[COLORS["primary"]]
+    # GRÁFICO 1: Distribuição Salarial
+    fig_dist = go.Figure()
+    
+    # Adicionar histograma com bins mais largos
+    fig_dist.add_trace(go.Histogram(
+        x=df_filtrado["salary_in_usd"],
+        nbinsx=20,  # Bins mais largos (igual ao notebook)
+        marker_color=COLORS["primary"],
+        opacity=0.75,
+        name="Frequência"
+    ))
+    
+    # Calcular média e mediana dos dados filtrados
+    media_filtrada = df_filtrado["salary_in_usd"].mean()
+    mediana_filtrada = df_filtrado["salary_in_usd"].median()
+    
+    # Adicionar linha vertical da média (vermelha tracejada)
+    fig_dist.add_vline(
+        x=media_filtrada,
+        line_dash="dash",
+        line_color="red",
+        line_width=2,
+        annotation_text=f"Média: ${media_filtrada:,.0f}",
+        annotation_position="top right",
+        annotation=dict(
+            font=dict(size=11, color="red"),
+            bgcolor="rgba(255,255,255,0.8)"
+        )
     )
+    
+    # Adicionar linha vertical da mediana (azul escuro tracejada)
+    fig_dist.add_vline(
+        x=mediana_filtrada,
+        line_dash="dash",
+        line_color="navy",
+        line_width=2,
+        annotation_text=f"Mediana: ${mediana_filtrada:,.0f}",
+        annotation_position="top left",
+        annotation=dict(
+            font=dict(size=11, color="navy"),
+            bgcolor="rgba(255,255,255,0.8)"
+        )
+    )
+    
     fig_dist.update_layout(
         template="plotly_white",
         height=300,
         margin=dict(l=20, r=20, t=20, b=20),
-        showlegend=False
+        showlegend=False,
+        xaxis_title="Salário (USD)",
+        yaxis_title="Frequência",
+        bargap=0.05,
+        xaxis=dict(
+            tickformat="$,.0f",
+            tickmode="linear",
+            dtick=50000  # Marcas a cada 50k
+        )
     )
     
     # GRÁFICO 2: Evolução Temporal
@@ -447,28 +481,31 @@ def update_graphs(ano_selecionado, exp_selecionada, tamanho_selecionado):
         template="plotly_white",
         height=350,
         margin=dict(l=20, r=20, t=20, b=20),
-        legend=dict(
-            orientation="h",
-            yanchor="bottom",
-            y=1.02,
-            xanchor="right",
-            x=1,
-            title=""
-        )
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1, title="")
     )
     
-    # GRÁFICO 3: Top 10 Cargos
-    top_cargos = df_filtrado.groupby("job_title")["salary_in_usd"].mean().nlargest(10).reset_index()
-    top_cargos = top_cargos.sort_values("salary_in_usd")  # Ordenar para melhor visualização
+    # GRÁFICO 3: Top 10 Cargos (CORRIGIDO - com filtro de mínimo de registros)
+    # Agrupar por cargo e calcular estatísticas
+    cargos_stats = df_filtrado.groupby("job_title").agg({
+        "salary_in_usd": ["mean", "count"]
+    }).reset_index()
+    cargos_stats.columns = ["job_title", "salary_mean", "count"]
+    
+    # Filtrar cargos com pelo menos 3 registros para evitar outliers
+    cargos_stats = cargos_stats[cargos_stats["count"] >= 3]
+    
+    # Pegar top 10
+    top_cargos = cargos_stats.nlargest(10, "salary_mean").sort_values("salary_mean")
     
     fig_cargos = px.bar(
         top_cargos,
-        x="salary_in_usd",
+        x="salary_mean",
         y="job_title",
         orientation="h",
-        labels={"salary_in_usd": "Salário Médio (USD)", "job_title": ""},
-        color="salary_in_usd",
-        color_continuous_scale="Blues"
+        labels={"salary_mean": "Salário Médio (USD)", "job_title": ""},
+        color="salary_mean",
+        color_continuous_scale="Blues",
+        hover_data={"count": True, "salary_mean": ":.2f"}
     )
     fig_cargos.update_layout(
         template="plotly_white",
@@ -509,7 +546,6 @@ def update_graphs(ano_selecionado, exp_selecionada, tamanho_selecionado):
     
     # GRÁFICO 5: Salários por Tamanho de Empresa
     empresa_data = df_filtrado.groupby("size_label")["salary_in_usd"].mean().reset_index()
-    # Ordenar por tamanho lógico
     ordem_tamanho = {"Small": 1, "Medium": 2, "Large": 3}
     empresa_data["ordem"] = empresa_data["size_label"].map(ordem_tamanho)
     empresa_data = empresa_data.sort_values("ordem")
@@ -545,4 +581,3 @@ if __name__ == "__main__":
     print("="*70 + "\n")
     
     app.run(debug=True, port=8050, host='127.0.0.1')
-
