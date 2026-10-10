@@ -6,11 +6,11 @@
 <p align="center">
   <a href="#-overview">Overview</a> •
   <a href="#-objective">Objective</a> •
-  <a href="#-technologies-used">Technologies</a> •
+  <a href="#%EF%B8%8F-technologies-used">Technologies</a> •
   <a href="#-project-structure">Project Structure</a> •
   <a href="#-development-methodology">Methodology</a> •
   <a href="#-implemented-features">Features</a> •
-  <a href="#-interactive-dashboard">Interactive Dashboard</a> •
+  <a href="#%EF%B8%8F-interactive-dashboard">Interactive Dashboard</a> •
   <a href="#-insights-and-results">Insights & Results</a> •
   <a href="#-how-to-use">How to Use</a> •
   <a href="#-contributing">Contributing</a> •
