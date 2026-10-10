@@ -334,7 +334,7 @@ Filters Available:
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/your-username/Statistical_Analysis_of_Salaries_in_Data.git
+git clone https://github.com/Laurentius96/Statistical_Analysis_of_Salaries_in_Data.git
 cd Statistical_Analysis_of_Salaries_in_Data
 ```
 
@@ -407,7 +407,7 @@ Contributions are welcome! This project can be enhanced in multiple ways:
 
 #### 1. Report Issues
 Found a bug or have a suggestion?
-- Open an [Issue](https://github.com/your-username/Statistical_Analysis_of_Salaries_in_Data/issues)
+- Open an [Issue](https://github.com/Laurentius96/Statistical_Analysis_of_Salaries_in_Data/issues)
 - Describe the problem or enhancement clearly
 - Include screenshots if applicable
 
@@ -431,7 +431,7 @@ Ideas for improvement:
 # 1. Fork the repository (click "Fork" on GitHub)
 
 # 2. Clone your fork
-git clone https://github.com/your-username/Statistical_Analysis_of_Salaries_in_Data.git
+git clone https://github.com/Laurentius96/Statistical_Analysis_of_Salaries_in_Data.git
 cd Statistical_Analysis_of_Salaries_in_Data
 
 # 3. Create a feature branch
@@ -529,9 +529,8 @@ chore: update dependencies
 <details>
 <summary><b>💬 Get in Touch</b> (Click to expand)</summary>
 
-- **Issues**: [GitHub Issues](https://github.com/your-username/Statistical_Analysis_of_Salaries_in_Data/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/your-username/Statistical_Analysis_of_Salaries_in_Data/discussions)
-- **Pull Requests**: [Contribute directly](https://github.com/your-username/Statistical_Analysis_of_Salaries_in_Data/pulls)
+- **Issues**: [GitHub Issues](https://github.com/Laurentius96/Statistical_Analysis_of_Salaries_in_Data/issues)
+- **Pull Requests**: [Contribute directly](https://github.com/Laurentius96/Statistical_Analysis_of_Salaries_in_Data/pulls)
 
 </details>
 
@@ -584,9 +583,9 @@ For complete license details, see [LICENSE.md](LICENSE.md) or visit:
 
 ## 🔗 Related Projects
 
-- [DNC Data Science Repository](https://github.com/your-username/DNC-Data-Science)
-- [Stock Management System](https://github.com/your-username/Structuring-Companys-Stock)
-- [Colab Preparation Agent](https://github.com/your-username/IA-Colab-Preparation-Agent)
+- [DNC Data Science Repository](https://github.com/Laurentius96/DNC-DataScience)
+- [Stock Management System](https://github.com/Laurentius96/Structuring_Company-s_Stock)
+- [Colab Preparation Agent](https://github.com/Laurentius96/IA-Colab_Preparation_Agent)
 
 ---
 
