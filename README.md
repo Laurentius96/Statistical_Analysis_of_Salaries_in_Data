@@ -1,597 +1,241 @@
 <div align="center">
-  <h1>📊 Statistical Analysis of Salaries in Data Science</h1>
-  <p><i>Comprehensive statistical analysis and interactive dashboard for Data Science salary trends worldwide</i></p>
-</div>
 
-<p align="center">
+# 📊 Statistical Analysis of Salaries in Data Science
+
+**What drives pay in data roles: experience, company size, job title, country and time, with an interactive Plotly Dash dashboard**
+
+![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![Pandas](https://img.shields.io/badge/Pandas-150458?style=for-the-badge&logo=pandas&logoColor=white)
+![Plotly](https://img.shields.io/badge/Plotly-3F4F75?style=for-the-badge&logo=plotly&logoColor=white)
+![Dash](https://img.shields.io/badge/Dash-008DE4?style=for-the-badge&logo=plotly&logoColor=white)
+![Bootstrap](https://img.shields.io/badge/Dash_Bootstrap-7952B3?style=for-the-badge&logo=bootstrap&logoColor=white)
+![Seaborn](https://img.shields.io/badge/Seaborn-4C72B0?style=for-the-badge)
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Laurentius96/Statistical_Analysis_of_Salaries_in_Data/blob/main/main.ipynb)
+
+<p>
   <a href="#-overview">Overview</a> •
-  <a href="#-objective">Objective</a> •
-  <a href="#%EF%B8%8F-technologies-used">Technologies</a> •
-  <a href="#-project-structure">Project Structure</a> •
-  <a href="#-development-methodology">Methodology</a> •
-  <a href="#-implemented-features">Features</a> •
-  <a href="#%EF%B8%8F-interactive-dashboard">Interactive Dashboard</a> •
-  <a href="#-insights-and-results">Insights & Results</a> •
+  <a href="#-dataset">Dataset</a> •
+  <a href="#-key-findings">Findings</a> •
+  <a href="#-salary-drivers">Drivers</a> •
+  <a href="#-trends-2020-2023">Trends</a> •
+  <a href="#-interactive-dashboard">Dashboard</a> •
   <a href="#-how-to-use">How to Use</a> •
-  <a href="#-contributing">Contributing</a> •
+  <a href="#-caveats">Caveats</a> •
   <a href="#-license">License</a>
 </p>
+
+</div>
 
 ---
 
 ## 🔍 Overview
 
-This project presents a complete **statistical analysis** of salaries in the Data Science field, combining exploratory data analysis (EDA) in Jupyter Notebook with an **interactive dashboard** developed in Plotly Dash. The solution enables data-driven insights about salary trends, experience levels, geographic distribution, and market evolution.
+How much does a data professional earn, and why? This project analyses **3,755 salary records (2020–2023)** to measure how experience level, company size, job title, country and year shape pay, and turns the results into a filterable **Plotly Dash dashboard** for HR teams and job seekers.
+
+| | |
+|---|---:|
+| 💰 Mean / median salary | **$137,570 / $135,000** |
+| 🎯 Executive vs. Entry level | **+148%** |
+| 📈 Growth of the mean salary 2020→2023 | **CAGR +17.3%** |
+| 🌍 Countries / job titles | 78 / 93 |
+
+> Built as a DNC School Data Science challenge.
+
+## 📊 Dataset
+
+[`data/data_science_salaries.csv`](data/data_science_salaries.csv): the Data Science Salaries dataset from Kaggle, as adapted for the challenge. No missing values.
 
 <details>
-<summary><b>🎯 Problem Solved</b> (Click to expand)</summary>
+<summary><b>📖 Columns</b></summary>
+<br>
 
-Understanding salary dynamics in Data Science is crucial for:
-- **Professionals**: Career planning and salary negotiation
-- **Companies**: Competitive compensation strategies
-- **Students**: Career expectations and specialization decisions
-- **Recruiters**: Market positioning and talent attraction
-
-This project transforms raw salary data into actionable insights through:
-- ✅ Comprehensive statistical analysis
-- ✅ Interactive visualizations
-- ✅ Temporal trend analysis
-- ✅ Geographic and experience-based segmentation
+| Column | Description |
+|---|---|
+| `work_year` | Year of the salary (2020–2023) |
+| `country`, `region` | Country and region of the record |
+| `experience_level` | EN (Entry), MI (Mid), SE (Senior), EX (Executive) |
+| `job_title` | Role |
+| `salary_in_usd` | Annual salary in USD |
+| `employee_residence`, `company_location` | Country codes of the employee and of the company |
+| `company_size` | S (small), M (medium), L (large) |
+| `years_of_experience` | Derived from `experience_level` (see [caveats](#-caveats)) |
 
 </details>
 
----
+## 💡 Key Findings
 
-## 🎯 Objective
+| Topic | Finding |
+|---|---|
+| 🎯 Experience | The strongest driver: Entry **$78.5K** → Mid **$104.5K** (+33%) → Senior **$153.1K** (+46%) → Executive **$194.9K** (+27%) |
+| 🏢 Company size | **Medium companies pay the most** (mean $143.1K), ahead of large ($118.3K) and small ($78.2K) |
+| 👔 Roles | Data Engineer, Data Scientist and Data Analyst are **66% of the records** |
+| 🥇 Best-paid roles | Principal Data Scientist ($198K), Director of Data Science ($195K), ML Software Engineer ($192K), among roles with at least 3 records |
+| 📈 Trend | Mean salary rose from **$92.3K (2020) to $149.0K (2023)**; Entry level grew the most (+65.7%), Senior the least (+16.3%) |
+| 🔗 Correlation | Experience level has the strongest link with salary (**r = 0.44**); company size alone shows none (r = 0.00) |
+| 📊 Distribution | Half of the salaries are between $95K and $175K; 63 IQR outliers (1.7%), all above $295K |
 
-Develop a complete analytical solution that:
+## 🧭 Salary Drivers
 
-1. **Explores** salary patterns across different dimensions (experience, location, company size)
-2. **Identifies** trends and correlations in compensation data
-3. **Visualizes** insights through an interactive dashboard
-4. **Enables** data-driven decision making for career and business strategies
+<details open>
+<summary><b>🎯 By experience level</b></summary>
+<br>
 
-<details>
-<summary><b>Key Questions Answered</b> (Click to expand)</summary>
-
-- 📈 How have salaries evolved over time?
-- 🌍 Which countries offer the highest compensation?
-- 💼 What are the highest-paid roles in Data Science?
-- 🏢 How does company size impact salaries?
-- 📊 What correlations exist between experience, location, and compensation?
-
-</details>
-
----
-
-## 🛠️ Technologies Used
-
-<details>
-<summary><b>Data Analysis & Visualization</b> (Click to expand)</summary>
-
-- **Python 3.11+** - Core programming language
-- **Pandas 2.1.4** - Data manipulation and analysis
-- **NumPy 1.26.2** - Numerical computing
-- **Matplotlib 3.8.2** - Static visualizations
-- **Seaborn 0.13.0** - Statistical data visualization
-
-</details>
-
-<details>
-<summary><b>Interactive Dashboard</b> (Click to expand)</summary>
-
-- **Plotly 5.18.0** - Interactive charts
-- **Dash 2.14.2** - Web application framework
-- **Dash Bootstrap Components 1.5.0** - Responsive UI components
+| Level | Mean | Median | Records | vs. previous level |
+|---|---:|---:|---:|---:|
+| Entry | $78,546 | $70,000 | 320 | — |
+| Mid | $104,526 | $100,000 | 805 | +33.1% |
+| Senior | $153,051 | $146,000 | 2,516 | +46.4% |
+| Executive | $194,931 | $196,000 | 114 | +27.4% |
 
 </details>
 
 <details>
-<summary><b>Development Environment</b> (Click to expand)</summary>
+<summary><b>🏢 By company size</b></summary>
+<br>
 
-- **Jupyter Notebook** - Exploratory data analysis
-- **VS Code** - Code editor
-- **Git/GitHub** - Version control
+| Size | Mean | Median | Records |
+|---|---:|---:|---:|
+| Small | $78,227 | $62,146 | 148 |
+| Medium | $143,131 | $140,000 | 3,153 |
+| Large | $118,301 | $108,500 | 454 |
 
 </details>
 
----
+<details>
+<summary><b>👔 Top 10 best-paid roles (at least 3 records)</b></summary>
+<br>
+
+| Role | Mean | Median | Records |
+|---|---:|---:|---:|
+| Principal Data Scientist | $198,171 | $164,630 | 8 |
+| Director of Data Science | $195,141 | $168,000 | 11 |
+| Machine Learning Software Engineer | $192,420 | $181,800 | 10 |
+| Data Science Manager | $191,279 | $183,780 | 58 |
+| Applied Scientist | $190,264 | $191,738 | 58 |
+| Head of Data | $183,858 | $202,500 | 10 |
+| Data Infrastructure Engineer | $175,052 | $183,655 | 6 |
+| Business Intelligence Engineer | $174,150 | $171,150 | 4 |
+| Machine Learning Scientist | $163,220 | $167,875 | 26 |
+| Research Engineer | $163,108 | $155,000 | 37 |
+
+</details>
+
+<details>
+<summary><b>🌍 Top countries of residence (at least 5 records)</b></summary>
+<br>
+
+| Country | Mean | Median | Records |
+|---|---:|---:|---:|
+| PR (Puerto Rico) | $166,000 | $160,000 | 5 |
+| US | $152,822 | $145,000 | 3,004 |
+| CA | $132,223 | $120,000 | 85 |
+| IE | $114,943 | $101,943 | 7 |
+| JP | $103,538 | $74,000 | 7 |
+| DE | $94,772 | $76,833 | 48 |
+| GB | $86,988 | $80,036 | 167 |
+
+</details>
+
+## 📈 Trends 2020-2023
+
+| Year | Mean | Median | Records | Growth |
+|---|---:|---:|---:|---:|
+| 2020 | $92,303 | $73,065 | 76 | — |
+| 2021 | $94,087 | $80,000 | 230 | +1.9% |
+| 2022 | $133,339 | $131,300 | 1,664 | +41.7% |
+| 2023 | $149,046 | $143,860 | 1,785 | +11.8% |
+
+**CAGR 2020→2023: +17.3%.** Growth by level: Entry +65.7%, Executive +45.6%, Mid +32.8%, Senior +16.3%.
+
+## 💻 Interactive Dashboard
+
+<div align="center">
+  <img src="assets/dashboard_preview.jpg" alt="Plotly Dash dashboard with KPI cards, filters, salary histogram, salary trend by experience level and top 10 best-paid roles" width="85%">
+</div>
+
+[`salary_dashboard.py`](salary_dashboard.py) is a responsive Plotly Dash app with:
+- **KPI cards:** records, mean and median salary, CAGR, job titles and countries
+- **Filters:** year, experience level, company size and country of residence
+- **Five linked charts:** salary distribution with mean and median, trend by experience level, top 10 best-paid roles, correlation matrix and mean salary by company size
 
 ## 📁 Project Structure
 
-<details>
-<summary><b>View Project Structure</b> (Click to expand)</summary>
-
 ```
-Statistical_Analysis_of_Salaries_in_Data/
-│
-├── Data/
-│   └── salario_profissionais_dados.csv    # Dataset with salary information
-│
-├── main.ipynb                              # Exploratory data analysis notebook
-│   ├── Data loading and cleaning
-│   ├── Descriptive statistics
-│   ├── Correlation analysis
-│   ├── Temporal trends
-│   ├── Geographic analysis
-│   └── Statistical visualizations
-│
-├── dashboard_salarios.py                   # Interactive Dash dashboard
-│   ├── Multi-filter system
-│   ├── 5 dynamic visualizations
-│   ├── KPI cards
-│   └── Responsive layout
-│
-├── requirements.txt                        # Python dependencies
-├── README.md                               # Project documentation
-└── LICENSE.md                              # CC BY-NC-ND 4.0 License
+📁 Statistical_Analysis_of_Salaries_in_Data/
+├── 📁 data/
+│   └── 📄 data_science_salaries.csv   # 3,755 salary records
+├── 📁 assets/
+│   └── 🖼️ dashboard_preview.jpg
+├── 📓 main.ipynb                      # Full analysis with outputs and charts
+├── 🐍 salary_dashboard.py             # Plotly Dash dashboard
+├── 📄 requirements.txt
+├── 📄 LICENSE.md                      # CC BY-NC-ND 4.0
+└── 📄 README.md
 ```
-
-</details>
-
----
-
-## 🔄 Development Methodology
-
-<details>
-<summary><b>1️⃣ Data Understanding & Preparation</b> (Click to expand)</summary>
-
-- **Dataset exploration**: 3,755 records across multiple years
-- **Data cleaning**: Handling missing values and outliers
-- **Feature engineering**: Creating categorical mappings and numerical encodings
-
-</details>
-
-<details>
-<summary><b>2️⃣ Exploratory Data Analysis (EDA)</b> (Click to expand)</summary>
-
-- **Descriptive statistics**: Mean, median, standard deviation, quartiles
-- **Distribution analysis**: Salary histograms and density plots
-- **Correlation analysis**: Relationships between variables
-- **Temporal trends**: Year-over-year salary evolution
-- **Segmentation**: Analysis by experience level, company size, and location
-
-</details>
-
-<details>
-<summary><b>3️⃣ Interactive Dashboard Development</b> (Click to expand)</summary>
-
-- **Architecture design**: Modular callback structure
-- **UI/UX design**: Professional color palette and responsive layout
-- **Filter implementation**: Year, experience, company size, and country
-- **Visualization optimization**: Performance and readability
-
-</details>
-
-<details>
-<summary><b>4️⃣ Insights & Documentation</b> (Click to expand)</summary>
-
-- **Key findings**: Statistical insights and business recommendations
-- **Technical documentation**: Code comments and README
-- **Reproducibility**: Clear instructions for setup and execution
-
-</details>
-
----
-
-## ✨ Implemented Features
-
-<details>
-<summary><b>📊 Jupyter Notebook Analysis</b> (Click to expand)</summary>
-
-- ✅ **Data profiling**: Complete dataset overview
-- ✅ **Statistical summaries**: Descriptive statistics by segments
-- ✅ **Correlation matrix**: Heatmap of variable relationships
-- ✅ **Distribution plots**: Histograms with mean/median reference lines
-- ✅ **Top jobs analysis**: Highest-paid roles with filtering
-- ✅ **Temporal trends**: Salary evolution over years
-- ✅ **Geographic insights**: Country-level salary comparison
-
-</details>
-
-<details>
-<summary><b>🎛️ Interactive Dashboard</b> (Click to expand)</summary>
-
-- ✅ **Multi-filter system**: Year, experience level, company size, country
-- ✅ **Real-time updates**: All charts respond to filter changes
-- ✅ **6 KPI cards**: Total records, average/median salary, CAGR, unique jobs, countries
-- ✅ **5 dynamic visualizations**:
-  - 📊 Salary distribution histogram (20 bins with mean/median lines)
-  - 📈 Temporal evolution by experience level
-  - 💼 Top 10 highest-paid jobs (minimum 3 records filter)
-  - 🔗 Correlation matrix heatmap
-  - 🏢 Salary by company size
-- ✅ **Responsive design**: Bootstrap-based layout for all screen sizes
-- ✅ **Professional UI**: Gradient KPI cards and modern color scheme
-
-</details>
-
----
-
-## 🖥️ Interactive Dashboard
-
-<details>
-<summary><b>🔍 Advanced Filtering System</b> (Click to expand)</summary>
-
-```
-Filters Available:
-├── Year (2020-2024)
-├── Experience Level (Entry, Mid, Senior, Executive)
-├── Company Size (Small, Medium, Large)
-└── Country (50+ countries)
-```
-
-</details>
-
-<details>
-<summary><b>📊 Visualizations</b> (Click to expand)</summary>
-
-1. **Salary Distribution**
-   - 20-bin histogram for optimal granularity
-   - Mean and median reference lines
-   - Matches notebook analysis standards
-
-2. **Temporal Evolution**
-   - Line chart with experience level segmentation
-   - Year-over-year trends
-   - Interactive hover details
-
-3. **Top 10 Jobs**
-   - Horizontal bar chart
-   - Filtered by minimum 3 records (outlier protection)
-   - Hover shows record count
-
-4. **Correlation Matrix**
-   - Heatmap with color scale
-   - Variables: Year, Salary, Experience, Company Size
-   - Correlation coefficients displayed
-
-5. **Company Size Analysis**
-   - Bar chart comparing Small, Medium, Large companies
-   - Average salary by segment
-
-</details>
-
-<details>
-<summary><b>🎨 UI/UX Highlights</b> (Click to expand)</summary>
-
-- **Color Palette**: Professional blue gradient theme
-- **Layout**: Responsive grid system (Bootstrap)
-- **Typography**: Clear hierarchy and readability
-- **Interactions**: Smooth transitions and hover effects
-
-</details>
-
----
-
-## 💡 Insights and Results
-
-<details>
-<summary><b>📈 Key Findings</b> (Click to expand)</summary>
-
-#### 1. Salary Trends
-- **Average Salary**: $137,570 USD
-- **Median Salary**: $135,000 USD
-- **CAGR**: Positive growth trend (varies by filter)
-- **Distribution**: Right-skewed with concentration around median
-
-#### 2. Experience Level Impact
-- **Executive**: Highest average compensation
-- **Senior**: Strong salary progression
-- **Mid-level**: Competitive market positioning
-- **Entry**: Growing demand with competitive entry salaries
-
-#### 3. Geographic Insights
-- **Top-paying countries**: Analysis reveals geographic salary disparities
-- **Remote work impact**: Location flexibility affects compensation
-- **Regional trends**: Emerging markets vs. established tech hubs
-
-#### 4. Company Size Correlation
-- **Large companies**: Higher average salaries and benefits
-- **Medium companies**: Balanced compensation and growth opportunities
-- **Small companies**: Competitive for specialized roles
-
-#### 5. Top-Paying Roles
-- **Principal Data Scientist**: Premium compensation
-- **Director of Data Science**: Leadership premium
-- **Specialized roles**: Machine Learning Engineers, Data Architects
-- **Emerging roles**: AI/ML specialists commanding high salaries
-
-</details>
-
-<details>
-<summary><b>🎯 Business Recommendations</b> (Click to expand)</summary>
-
-**For Professionals:**
-- 📚 Invest in advanced skills (ML, AI, Cloud)
-- 🌍 Consider geographic mobility for salary optimization
-- 📈 Target senior/leadership roles for maximum compensation
-- 🔄 Continuous learning to stay competitive
-
-**For Companies:**
-- 💰 Benchmark salaries against market data
-- 🎯 Competitive compensation for retention
-- 📊 Data-driven salary structures
-- 🌟 Invest in employee development
-
-</details>
-
----
 
 ## 🚀 How to Use
 
-<details>
-<summary><b>Prerequisites</b> (Click to expand)</summary>
+1. **Clone and install**
 
-- Python 3.11 or higher
-- pip (Python package manager)
-- Git (for cloning the repository)
+   ```bash
+   git clone https://github.com/Laurentius96/Statistical_Analysis_of_Salaries_in_Data.git
+   cd Statistical_Analysis_of_Salaries_in_Data
+   pip install -r requirements.txt
+   ```
 
-</details>
+2. **Run the dashboard** and open http://127.0.0.1:8050
 
-<details>
-<summary><b>Installation</b> (Click to expand)</summary>
+   ```bash
+   python salary_dashboard.py
+   ```
 
-1. **Clone the repository**
-```bash
-git clone https://github.com/Laurentius96/Statistical_Analysis_of_Salaries_in_Data.git
-cd Statistical_Analysis_of_Salaries_in_Data
-```
+3. **Explore the analysis**
 
-2. **Create a virtual environment** (recommended)
-```bash
-# Windows
-python -m venv venv
-venv\Scripts\activate
+   ```bash
+   jupyter notebook main.ipynb
+   ```
 
-# Linux/Mac
-python3 -m venv venv
-source venv/bin/activate
-```
+> 💡 **In Google Colab:** run `!git clone https://github.com/Laurentius96/Statistical_Analysis_of_Salaries_in_Data.git` and `%cd Statistical_Analysis_of_Salaries_in_Data` in the first cell, then run the notebook.
 
-3. **Install dependencies**
-```bash
-pip install -r requirements.txt
-```
+## 🚧 Caveats
 
-</details>
+- **80% of the records are from US residents** and 92% are from 2022–2023, so global and early-year figures are less representative.
+- **`years_of_experience` is derived from `experience_level`** (Entry 1–2, Mid 3–5, Senior 6–8, Executive 9–10), so its correlation with salary (r = 0.41) only mirrors the level.
+- The comparison by company size does not control for country or level; it describes the sample, not a causal effect.
 
-<details>
-<summary><b>Running the Project</b> (Click to expand)</summary>
-
-#### Option 1: Jupyter Notebook Analysis
-```bash
-jupyter notebook main.ipynb
-```
-- Explore the complete statistical analysis
-- Run cells sequentially to reproduce results
-- Modify parameters for custom analysis
-
-#### Option 2: Interactive Dashboard
-```bash
-python dashboard_salarios.py
-```
-- Access the dashboard at: `http://127.0.0.1:8050/`
-- Use filters to explore different segments
-- Export visualizations as needed
-
-</details>
-
-<details>
-<summary><b>📊 Dataset Information</b> (Click to expand)</summary>
-
-**File**: `Data/salario_profissionais_dados.csv`
-
-**Columns**:
-- `work_year`: Year of salary data
-- `experience_level`: EN (Entry), MI (Mid), SE (Senior), EX (Executive)
-- `job_title`: Specific role title
-- `salary_in_usd`: Annual salary in USD
-- `employee_residence`: Employee's country of residence
-- `company_location`: Company's country location
-- `company_size`: S (Small), M (Medium), L (Large)
-- `country`: Country name
-- `region`: Geographic region
-- `years_of_experience`: Years of professional experience
-
-</details>
-
----
+**Next steps**
+- [ ] Compare salaries within the US only, removing the country effect
+- [ ] Model salary with level, role, size and country together (regression with interactions)
 
 ## 🤝 Contributing
 
-Contributions are welcome! This project can be enhanced in multiple ways:
+Contributions, ideas and feedback are welcome!
 
-<details>
-<summary><b>🌟 How to Contribute</b> (Click to expand)</summary>
+- 🐛 **Found a bug or something unclear?** [Open an issue](https://github.com/Laurentius96/Statistical_Analysis_of_Salaries_in_Data/issues/new) describing what happened and how to reproduce it.
+- 💡 **Have an idea or a question?** [Open an issue](https://github.com/Laurentius96/Statistical_Analysis_of_Salaries_in_Data/issues/new) and tell me about it.
+- 🔧 **Want to propose a fix?** Fork the repository, create a branch (`git checkout -b fix/short-description`), commit your changes and open a pull request explaining what changed and why.
 
-#### 1. Report Issues
-Found a bug or have a suggestion?
-- Open an [Issue](https://github.com/Laurentius96/Statistical_Analysis_of_Salaries_in_Data/issues)
-- Describe the problem or enhancement clearly
-- Include screenshots if applicable
+By contributing, you agree that your contribution is shared under the same license as this project.
 
-#### 2. Propose New Features
-Ideas for improvement:
-- 📊 Additional visualizations (scatter plots, box plots, violin plots)
-- 🔍 Advanced filtering options (multiple country selection, salary ranges)
-- 📈 Predictive models (salary prediction based on features)
-- 🌍 Geographic maps (choropleth maps for salary distribution)
-- 📱 Mobile-responsive improvements
-- 🎨 Dark mode theme
-- 📥 Export functionality (PDF reports, CSV data)
-- 🔄 Real-time data updates
-- 🤖 Machine Learning insights (clustering, classification)
+## 📜 License
 
-#### 3. Submit Pull Requests
+This project is licensed under the [Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License (CC BY-NC-ND 4.0)](LICENSE.md).
 
-**Step-by-step guide:**
+**What this means:**
+- ✅ You may **share** this work with **attribution**
+- ❌ You may **not** use it for **commercial purposes**
+- ❌ You may **not** distribute **modified versions**
 
-```bash
-# 1. Fork the repository (click "Fork" on GitHub)
+## 🙏 Acknowledgments
 
-# 2. Clone your fork
-git clone https://github.com/Laurentius96/Statistical_Analysis_of_Salaries_in_Data.git
-cd Statistical_Analysis_of_Salaries_in_Data
-
-# 3. Create a feature branch
-git checkout -b feature/your-feature-name
-
-# 4. Make your changes
-# - Add new features
-# - Fix bugs
-# - Improve documentation
-
-# 5. Test your changes
-python dashboard_salarios.py  # Test dashboard
-jupyter notebook main.ipynb   # Test notebook
-
-# 6. Commit with clear messages
-git add .
-git commit -m "feat: add new visualization for salary trends"
-
-# 7. Push to your fork
-git push origin feature/your-feature-name
-
-# 8. Open a Pull Request on GitHub
-# - Describe your changes
-# - Reference related issues
-# - Include screenshots if applicable
-```
-
-#### 4. Improve Documentation
-- 📝 Fix typos or clarify instructions
-- 🌐 Translate README to other languages
-- 📚 Add code comments and docstrings
-- 🎓 Create tutorials or guides
-
-</details>
-
-<details>
-<summary><b>📋 Contribution Guidelines</b> (Click to expand)</summary>
-
-#### Code Standards
-- Follow PEP 8 style guide for Python
-- Add comments for complex logic
-- Include docstrings for functions
-- Test your code before submitting
-
-#### Commit Message Format
-Use [Conventional Commits](https://www.conventionalcommits.org/):
-```
-feat: add new feature
-fix: correct bug
-docs: update documentation
-style: format code
-refactor: restructure code
-test: add tests
-chore: update dependencies
-```
-
-#### Pull Request Checklist
-- [ ] Code follows project style
-- [ ] Tests pass successfully
-- [ ] Documentation updated
-- [ ] Commit messages are clear
-- [ ] No merge conflicts
-
-</details>
-
-<details>
-<summary><b>🎯 Priority Areas for Contribution</b> (Click to expand)</summary>
-
-1. **Data Analysis Enhancements**
-   - Statistical tests (t-tests, ANOVA)
-   - Time series forecasting
-   - Outlier detection algorithms
-
-2. **Dashboard Improvements**
-   - Additional chart types
-   - Enhanced interactivity
-   - Performance optimization
-
-3. **Machine Learning Integration**
-   - Salary prediction models
-   - Job role classification
-   - Clustering analysis
-
-4. **Documentation**
-   - Video tutorials
-   - API documentation
-   - Use case examples
-
-</details>
-
----
-
-## 🌍 Community & Support
-
-<details>
-<summary><b>💬 Get in Touch</b> (Click to expand)</summary>
-
-- **Issues**: [GitHub Issues](https://github.com/Laurentius96/Statistical_Analysis_of_Salaries_in_Data/issues)
-- **Pull Requests**: [Contribute directly](https://github.com/Laurentius96/Statistical_Analysis_of_Salaries_in_Data/pulls)
-
-</details>
-
-<details>
-<summary><b>🙏 Acknowledgments</b> (Click to expand)</summary>
-
-- Dataset source: [Kaggle/Data Science Salaries]
-- Inspiration: Data Science community
-- Contributors: See [CONTRIBUTORS.md](CONTRIBUTORS.md)
-
-</details>
-
-<details>
-<summary><b>⭐ Show Your Support</b> (Click to expand)</summary>
-
-If this project helped you, please consider:
-- ⭐ Starring the repository
-- 🍴 Forking for your own analysis
-- 📢 Sharing with the community
-- 💬 Providing feedback
-
-</details>
-
----
-
-## 📄 License
-
-This project is licensed under the **Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License (CC BY-NC-ND 4.0)**.
-
-<details>
-<summary><b>License Summary</b> (Click to expand)</summary>
-
-### You are free to:
-- ✅ **Share** — copy and redistribute the material in any medium or format
-
-### Under the following terms:
-- **Attribution** — You must give appropriate credit, provide a link to the license, and indicate if changes were made
-- **NonCommercial** — You may not use the material for commercial purposes
-- **NoDerivatives** — If you remix, transform, or build upon the material, you may not distribute the modified material
-- **No additional restrictions** — You may not apply legal terms or technological measures that legally restrict others from doing anything the license permits
-
-### Full License
-For complete license details, see [LICENSE.md](LICENSE.md) or visit:
-- English: https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode
-- Português: https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode.pt
-
-</details>
-
----
-
-## 🔗 Related Projects
-
-- [DNC Data Science Repository](https://github.com/Laurentius96/DNC-DataScience)
-- [Stock Management System](https://github.com/Laurentius96/Structuring_Company-s_Stock)
-- [Colab Preparation Agent](https://github.com/Laurentius96/IA-Colab_Preparation_Agent)
+- [DNC School](https://www.escoladnc.com.br/) for the challenge
+- The Data Science Salaries dataset on Kaggle
 
 ---
 
 <div align="center">
-  <p>Made with ❤️ and ☕ by <a href="https://github.com/Laurentius96">Lorenzo C. Bianchi</a></p>
-  <p>
-    <a href="#top">⬆️ Back to top</a>
-  </p>
+
+**Lorenzo C. Bianchi** · [GitHub](https://github.com/Laurentius96) · [LinkedIn](https://www.linkedin.com/in/cb-lorenzo/)
+
 </div>
